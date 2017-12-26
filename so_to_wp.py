@@ -29,14 +29,18 @@ for topic in topics:
   for item in questions['items']:
       ##Only select the top 5 voted and answered questions.
       if item['is_answered'] == True and 'accepted_answer_id' in item and i < 5:
-
-        post.title = item['title']
-        answer=SITE.fetch('answers', filter='withbody', ids=[item['accepted_answer_id']])
-        post.content=item['body']+"\n\n\n <b>Solution:</b>\n"+answer['items'][0]['body']
-        post.terms_names = {
-         'post_tag': item['tags'],
-         'category': [topic]
-        }
-        post.post_status='publish'
-        wp.call(NewPost(post))
-        i=i+1
+        try:
+          post.title = item['title']
+          print("Posting: "+item['title'])
+          answer=SITE.fetch('answers', filter='withbody', ids=[item['accepted_answer_id']])
+          post.content=item['body']+"\n\n\n <b>Solution:</b>\n"+answer['items'][0]['body']
+          post.terms_names = {
+           'post_tag': item['tags'],
+           'category': [topic]
+          }
+          post.post_status='publish'
+          wp.call(NewPost(post))
+          i=i+1
+        except Exception as e:
+            print("Exception occured"+str(e))
+            pass
